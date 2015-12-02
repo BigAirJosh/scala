@@ -5,11 +5,7 @@ import java.time.format._
 object cal {
 
   def main(args: Array[String]) {
-    val monthYearParser = DateTimeFormatter.ofPattern("dd MM yyyy")
-    val monthYearFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
-    val dayFormatter = DateTimeFormatter.ofPattern("EE")
-
-    var date = LocalDate.now
+    var date = LocalDate.now.withDayOfMonth(1)
     if(args.length > 0) {
       var pattern = "dd "
       var dateStr = "01 "
@@ -35,14 +31,12 @@ object cal {
         dateStr += date.getYear()
         pattern += "yyyy"
       }
-      //println(pattern)
-      //println(dateStr)
       date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern(pattern))
     }
 
 
 
-    val header = monthYearFormatter.format(date);
+    val header = DateTimeFormatter.ofPattern("MMMM yyyy").format(date);
     var space = (20 - header.length()) / 2
     while(space > 0) {
       print(" ")
@@ -50,9 +44,30 @@ object cal {
     }
 
     println(header)
-    println("Su Mo Tu We Th Fr Sa")
+    println("Mo Tu We Th Fr Sa Su")
 
+    var start = 3 * (date.getDayOfWeek().getValue() - 1)
+    while(start > 0) {
+      print(" ")
+      start -= 1
+    }
 
+    val fmt = DateTimeFormatter.ofPattern("d")
+    val mon = date.getMonthValue()
+    while(date.getMonthValue() == mon) {
+      val d = fmt.format(date);
+      if(d.length() < 2)
+        print(" " + d + " ")
+      else
+        print(d + " ")
+      if(date.getDayOfWeek().getValue() == 7)
+        println("")
+      date = date.plus(1, ChronoUnit.DAYS)
+    }
+
+    println("")
+
+    
 
   }
 }
